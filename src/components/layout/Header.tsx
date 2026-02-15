@@ -21,6 +21,7 @@ const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -127,9 +128,25 @@ const Header: React.FC = () => {
           </motion.div>
         </div>
 
+  {/* const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+
+  // ... (existing effects)
+
+  return (
+    // ... */}
         {/* Right Actions */}
         <div className="flex items-center gap-2 md:gap-4">
-            
+          
+          {/* Mobile Search Toggle */}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="md:hidden"
+            onClick={() => setIsMobileSearchOpen(!isMobileSearchOpen)}
+          >
+            <Search className="w-5 h-5" />
+          </Button>
+
           {/* Theme Toggle */}
           <Button variant="ghost" size="icon" onClick={toggleTheme} className="relative overflow-hidden">
             <AnimatePresence mode='wait'>
@@ -231,6 +248,53 @@ const Header: React.FC = () => {
         </div>
       </div>
       
+      <AnimatePresence>
+        {isMobileSearchOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="md:hidden border-b bg-background absolute top-20 left-0 right-0 z-40 overflow-hidden"
+          >
+            <div className="container px-4 py-4">
+              <div className="relative">
+                <Input
+                  type="text"
+                  placeholder="Məhsul, brend və ya kateqoriya axtar..."
+                  className="w-full pl-10 h-10"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  autoFocus
+                />
+                <Search className="absolute left-3 top-2.5 text-muted-foreground w-5 h-5" />
+              </div>
+              
+               {/* Mobile Search Results */}
+               {searchResults.length > 0 && searchTerm.length > 1 && (
+                  <div className="mt-2 bg-card border rounded-xl shadow-lg overflow-hidden">
+                    <ul>
+                      {searchResults.map(product => (
+                        <li key={product.id}>
+                          <button 
+                            onClick={() => handleProductClick(product)}
+                            className="flex items-center gap-3 p-3 w-full text-left hover:bg-muted transition-colors border-b last:border-none"
+                          >
+                            <img src={product.image} alt={product.name} className="w-10 h-10 object-cover rounded" />
+                            <div>
+                               <p className="font-medium text-sm line-clamp-1">{product.name}</p>
+                               <p className="text-xs text-muted-foreground">{product.price.toFixed(2)} AZN</p>
+                            </div>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+               )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
        {/* Mobile Menu */}
        <AnimatePresence>
         {isMobileMenuOpen && (
@@ -241,13 +305,6 @@ const Header: React.FC = () => {
             className="md:hidden border-t bg-background"
           >
             <div className="container px-4 py-4 space-y-4">
-              <Input
-                type="text"
-                placeholder="Axtar..."
-                className="w-full"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
               <div className="flex flex-col gap-2">
                 <Button variant="outline" fullWidth>Daxil ol</Button>
                 <Button fullWidth>Qeydiyyat</Button>
